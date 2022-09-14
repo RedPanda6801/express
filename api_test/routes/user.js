@@ -1,10 +1,34 @@
 const express = require("express");
-const { verifyToken, apiLimiter } = require("./middleware");
+const {
+  verifyToken,
+  apiLimiter,
+  isLoggedIn,
+  isNotLoggedIn,
+} = require("./middleware");
 const User = require("../models/user");
 const { Follow, Post } = require("../models");
 const router = express.Router();
 
 // 회원 수정 기능 (닉네임만)
+router.get("/", isLoggedIn, async (req, res) => {
+  try {
+    console.log(req.body);
+    // const user = await User.findOne({ id: req.user.id });
+    // if (user) {
+    //   res.status(200).json(user.data);
+    // } else {
+    //   res.json({
+    //     code: 400,
+    //     message: "no user",
+    //   });
+    // }
+  } catch (err) {
+    return res.json({
+      code: 400,
+      message: "알수없는 오류",
+    });
+  }
+});
 router.post("/update", verifyToken, apiLimiter, async (req, res) => {
   try {
     // req = {inputNick}
@@ -13,10 +37,7 @@ router.post("/update", verifyToken, apiLimiter, async (req, res) => {
       where: { id: req.decoded.id }, // jwt에서 가져온 user Id
     });
     if (user) {
-      await User.update(
-        { nick: newname },
-        { where: { id: req.decoded.id } }
-      );
+      await User.update({ nick: newname }, { where: { id: req.decoded.id } });
       res.json({
         code: 200,
         message: `${newname}으로 수정되었습니다.`,

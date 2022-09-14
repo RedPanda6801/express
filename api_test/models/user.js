@@ -15,7 +15,7 @@ module.exports = class User extends Sequelize.Model {
           allowNull: false,
         },
         password: {
-          type: Sequelize.STRING(20),
+          type: Sequelize.STRING(100),
           allowNull: false,
         },
         // 실명 확인에서 추가

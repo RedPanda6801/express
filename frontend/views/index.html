@@ -11,57 +11,78 @@
     />
   </head>
   <body>
-    <h1>Main Page</h1>
-    <div style="width: 13%">
-      <div>
-        <button id="loginBtn" type="button" class="btn btn-light">Login</button>
-        <button id="joinBtn" type="button" class="btn btn-light">
-          Sign in
-        </button>
+    <div id="mainDiv">
+      <h1>Main Page</h1>
+      <div style="width: 13%">
+        <div>
+          <button id="loginBtn" type="button" class="btn btn-light">
+            Login
+          </button>
+          <button id="joinBtn" type="button" class="btn btn-light">
+            Sign in
+          </button>
+        </div>
+        <div id="login">
+          <form id="loginForm">
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"
+                >Email address</label
+              >
+              <input type="email" placeholder="name@example.com" />
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"
+                >Password</label
+              >
+              <input type="password" placeholder="password" />
+            </div>
+            <button type="submit" class="btn btn-light">Submit</button>
+          </form>
+        </div>
+        <div id="join" style="display: none">
+          <form id="joinForm">
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"
+                >Email address</label
+              >
+              <input type="email" placeholder="name@example.com" />
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"
+                >Password</label
+              >
+              <input type="password" placeholder="password" />
+            </div>
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label"
+                >Nick Name</label
+              >
+              <input type="text" placeholder="nickname" />
+            </div>
+            <button type="submit" class="btn btn-light">Submit</button>
+          </form>
+        </div>
       </div>
-      <div id="login">
-        <form id="loginForm">
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Email address</label
-            >
-            <input type="email" placeholder="name@example.com" />
-          </div>
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Password</label
-            >
-            <input type="password" placeholder="password" />
-          </div>
-          <button type="submit" class="btn btn-light">Submit</button>
-        </form>
-      </div>
-      <div id="join" style="display: none">
-        <form id="joinForm">
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Email address</label
-            >
-            <input type="email" placeholder="name@example.com" />
-          </div>
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Password</label
-            >
-            <input type="password" placeholder="password" />
-          </div>
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label"
-              >Nick Name</label
-            >
-            <input type="text" placeholder="nickname" />
-          </div>
-          <button type="submit" class="btn btn-light">Submit</button>
-        </form>
+    </div>
+    <div id="postDiv" style="display: none">
+      <div style="display: flex">
+        <div id="userDiv" style="width: 30%; background-color: burlywood">
+          <h3 id="userNickText">안녕하세요, xx님</h3>
+          <button id="logoutBtn">로그아웃</button>
+          <button id="updateBtn">개인정보</button>
+        </div>
+        <div style="width: 10%"></div>
+        <div id="postDiv" style="width: 55%; background-color: burlywood">
+          <form id="postForm">
+            <input placeholder="Content Input" />
+            <button type="submit">게시글 추가</button>
+          </form>
+        </div>
       </div>
     </div>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/login.js"></script>
+    <script src="/userInfo.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
   </body>
 </html>

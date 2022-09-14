@@ -4,6 +4,13 @@ const loginBtn = document.getElementById("loginBtn");
 const joinBtn = document.getElementById("joinBtn");
 const loginForm = document.getElementById("loginForm");
 const joinForm = document.getElementById("joinForm");
+const mainDiv = document.getElementById("mainDiv");
+const postDiv = document.getElementById("postDiv");
+const nickText = document.getElementById("userNickText");
+
+const getUser = async (req, res) => {
+  const user = await axios.get("http://localhost:8001/user");
+};
 
 loginBtn.addEventListener("click", () => {
   joinDiv.style.display = "none";
@@ -42,9 +49,17 @@ loginForm.addEventListener("submit", async (e) => {
     email,
     password,
   });
-  console.log(login);
+  console.log(login.data);
   if (login.data.code == 200) {
     alert("정상적으로 로그인 되었습니다.");
-    window.location.href = "/post";
+    postDiv.style.display = "flex";
+    mainDiv.style.display = "none";
+    let userInfoText = `안녕하세요, ${login.data.user.nick}님`;
+    nickText.innerText =
+      login.data.user.password && login.data.user.name
+        ? userInfoText
+        : userInfoText + "\n본인 인증을 해주세요!";
+  } else if (login.data.code == 400) {
+    alert("로그인에 실패했습니다. 다시 로그인해주세요.");
   }
 });
