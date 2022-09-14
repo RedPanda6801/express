@@ -1,36 +1,50 @@
-const Sequelize = require('sequelize');
+// 지역 DB를 따로 두는 걸로 하자. 조회가 많기 때문
+const Sequelize = require("sequelize");
 
 module.exports = class User extends Sequelize.Model {
   static init(sequelize) {
-    return super.init({
-      email: {
-        type: Sequelize.STRING(40),
-        allowNull: true,
-        unique: true,
+    return super.init(
+      {
+        email: {
+          type: Sequelize.STRING(40),
+          allowNull: false,
+          unique: true,
+        },
+        nick: {
+          type: Sequelize.STRING(15),
+          allowNull: false,
+        },
+        password: {
+          type: Sequelize.STRING(20),
+          allowNull: false,
+        },
+        // 실명 확인에서 추가
+        name: {
+          type: Sequelize.STRING(100),
+          allowNull: true,
+        },
+        phone: {
+          type: Sequelize.STRING(13),
+          allowNull: true,
+        },
       },
-      nick: {
-        type: Sequelize.STRING(15),
-        allowNull: false,
-      },
-      password: {
-        type: Sequelize.STRING(100),
-        allowNull: true,
-      },
-    }, {
-      sequelize,
-      timestamps: true,
-      underscored: false,
-      modelName: 'User',
-      tableName: 'users',
-      paranoid: true,
-      charset: 'utf8',
-      collate: 'utf8_general_ci',
-    });
+      {
+        sequelize,
+        timestamps: true,
+        underscored: false,
+        modelName: "User",
+        tableName: "Users",
+        paranoid: true,
+        charset: "utf8",
+        collate: "utf8_general_ci",
+      }
+    );
   }
 
   static associate(db) {
+    db.User.belongsTo(db.Country);
     db.User.hasMany(db.Post);
     db.User.hasMany(db.Like);
-    db.User.hasMany(db.Follow, {foreignKey: 'followerId', targetKey: 'id'});
+    db.User.hasMany(db.Follow, { foreignKey: "followerId", targetKey: "id" });
   }
 };
