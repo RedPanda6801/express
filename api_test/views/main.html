@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <h1>Main Page</h1>
+    <div style="width: 13%">
+      <div>
+        <button id="loginBtn" type="button" class="btn btn-light">Login</button>
+        <button id="joinBtn" type="button" class="btn btn-light">
+          Sign in
+        </button>
+      </div>
+      <div id="login">
+        <form id="loginForm">
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label"
+              >Email address</label
+            >
+            <input type="email" placeholder="name@example.com" />
+          </div>
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label"
+              >Password</label
+            >
+            <input type="password" placeholder="password" />
+          </div>
+          <button type="submit" class="btn btn-light">Submit</button>
+        </form>
+      </div>
+      <div id="join" style="display: none">
+        <form id="joinForm">
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label"
+              >Email address</label
+            >
+            <input type="email" placeholder="name@example.com" />
+          </div>
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label"
+              >Password</label
+            >
+            <input type="password" placeholder="password" />
+          </div>
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label"
+              >Nick Name</label
+            >
+            <input type="text" placeholder="nickname" />
+          </div>
+          <button type="submit" class="btn btn-light">Submit</button>
+        </form>
+      </div>
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/login.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
