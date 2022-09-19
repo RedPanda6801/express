@@ -5,20 +5,19 @@ const path = require("path");
 const app = express();
 const logger = require("morgan");
 const mainRouter = require("./routes");
-const postRouter = require("./routes/post");
+//const postRouter = require("./routes/post");
 
 app.use(logger("dev"));
 app.use("/", express.static(path.join(__dirname, "public")));
 
 app.use("/", mainRouter);
-app.use("/post", postRouter);
+//app.use("/post", postRouter);
 
 app.use((req, res, next) => {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
   error.status = 404;
   next(error);
 });
-console.log("hello");
 app.use((err, req, res, next) => {
   res.locals.message = err.message;
   console.log(err);
