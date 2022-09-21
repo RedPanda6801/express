@@ -4,7 +4,7 @@ const { User } = require("../models");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
-const { isLoggedIn, isNotLoggedIn } = require("./middleware");
+const { isLoggedIn, isNotLoggedIn, verifyToken } = require("./middleware");
 // 회원가입 기능
 router.post("/join", async (req, res) => {
   // req = {email, password, nick}
@@ -87,11 +87,14 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
   })(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
 });
 
-router.get("/logout", isLoggedIn, (req, res) => {
+router.get("/logout", verifyToken, (req, res) => {
   console.log("logout");
-  req.logout();
+  //req.logout();
   req.session.destroy();
-  res.redirect("/");
+  return res.json({
+    code: 204,
+    message: "success",
+  });
 });
 
 module.exports = router;

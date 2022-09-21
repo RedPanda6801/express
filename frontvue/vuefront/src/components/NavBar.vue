@@ -41,6 +41,7 @@
   </v-app>
 </template>
 <script>
+import axios from "axios";
 export default {
   name: "NavBar",
   data: () => ({
@@ -48,7 +49,7 @@ export default {
     items: [{ title: "Login" }, { title: "Logout" }],
   }),
   methods: {
-    clickMenu(value) {
+    async clickMenu(value) {
       if (value == "Login") {
         if (!localStorage.getItem("token")) {
           // 토큰 유효시간에 대헤 쿠키에서 확인해야함!!!!(중요)
@@ -59,9 +60,27 @@ export default {
         }
       } else if (value == "Logout") {
         if (localStorage.getItem("user")) {
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
-          this.$router.go(0);
+          await axios
+            .get(process.env.VUE_APP_URL + "/auth/logout", {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            })
+            .then(async () => {
+              alert("로그아웃 성공");
+              localStorage.removeItem("user");
+              localStorage.removeItem("token");
+              this.$router.go(0);
+            })
+            .catch((err) => {
+              console.log(err);
+              if (err.status === 419) {
+                alert("토큰이 만료되었습니다. 다시 로그인해주세요");
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                this.$router.go(0);
+              }
+            });
         } else alert("로그인을 하세요");
       }
     },

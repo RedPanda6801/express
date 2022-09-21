@@ -1,8 +1,6 @@
 const jwt = require("jsonwebtoken");
 const RateLimit = require("express-rate-limit");
 
-
-
 exports.isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     next();
@@ -20,21 +18,20 @@ exports.isNotLoggedIn = (req, res, next) => {
   }
 };
 
-
 exports.verifyToken = (req, res, next) => {
   try {
-    console.log(req);
-    req.decoded = jwt.verify(req.session.jwt, process.env.JWT_SECRET);
+    const token = req.headers.authorization.split(" ")[1];
+    req.decoded = jwt.verify(token, process.env.JWT_SECRET);
     return next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
       // 유효기간 초과
-      return res.status(419).json({
+      return res.json({
         code: 419,
         message: "토큰이 만료되었습니다",
       });
     }
-    return res.status(401).json({
+    return res.json({
       code: 401,
       message: "유효하지 않은 토큰입니다",
     });
