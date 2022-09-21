@@ -5,9 +5,24 @@ const {
   isLoggedIn,
   isNotLoggedIn,
 } = require("./middleware");
-const User = require("../models/user");
-const { Follow, Post } = require("../models");
+const { Follow, Post, User } = require("../models");
+const {
+  getUser,
+  updateUser,
+  deleteUser,
+  acceptUser,
+} = require("../controllers/user");
+
 const router = express.Router();
+
+// 유저 정보 조회
+// router.get("/", verifyToken, getUser);
+// 유저 정보 수정
+// router.put("/update", verifyToken, updateUser);
+// // 유저 인증
+// router.post("/accept", verifyToken, acceptUser);
+// // 유저 탈퇴
+// router.post("/delete", verifyToken, updateUser);
 
 // 회원 수정 기능 (닉네임만)
 router.get("/", isLoggedIn, async (req, res) => {
