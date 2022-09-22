@@ -51,11 +51,10 @@ exports.signin = async (req, res, next) => {
   passport.authenticate("local", (authError, user, info) => {
     if (authError) {
       console.error(authError);
-      return next(authError);
+      return res.status(404).json({ authError });
     }
     if (!user) {
-      return res.json({
-        code: 400,
+      return res.status(400).json({
         message: "failed",
       });
     }
@@ -84,22 +83,4 @@ exports.signin = async (req, res, next) => {
       });
     });
   })(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
-};
-
-exports.logout = async (req, res) => {
-  try {
-    // 로그아웃에서 사용자가 토큰을 가지고 있는지 확인하는 것이 필요한지 의문
-    // 로그아웃 시에 웹브라우저의 로컬 저장소 내부의 토큰만 지워주면 되기 때문
-    console.log("logout");
-    return res.json({
-      code: 204,
-      message: "success",
-    });
-  } catch (err) {
-    console.log(err);
-    return res.json({
-      code: 404,
-      err,
-    });
-  }
 };

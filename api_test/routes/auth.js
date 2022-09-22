@@ -8,7 +8,5 @@ const router = express.Router();
 router.post("/join", signup);
 // 로그인 기능
 router.post("/login", isNotLoggedIn, signin);
-// 로그아웃 기능
-router.get("/logout", verifyToken, logout);
 
 module.exports = router;

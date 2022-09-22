@@ -68,6 +68,7 @@ export default {
         password: this.password,
       };
       console.log("auth/login - axiosBody : ", axiosBody);
+      console.log(process.env.VUE_APP_URL);
       await axios
         .post(process.env.VUE_APP_URL + "/auth/login", axiosBody)
         // 서버에 로그인을 요청함
