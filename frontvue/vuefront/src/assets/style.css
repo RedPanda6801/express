@@ -10,4 +10,12 @@
   border-style: none;
   background-color: white;
   box-shadow: 5px 5px 5px rgb(153, 100, 19);
+  width: 400px;
+  height: 550px;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }

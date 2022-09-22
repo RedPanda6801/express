@@ -1,56 +1,81 @@
 <template lang="ko">
-<div class="backDiv">
+<div>
+  <!-- <div class="container"> -->
     <div id="formDiv">
       <ValidationObserver rel="signInForm" v-slot="{handleSubmit, invalid, validate}">
       <form @submit.prevent="handleSubmit(signIn)">
-<h1>당근 마을</h1><br/>
-          <h4>마을 둘러보기</h4>
+          <div class="container">    
+          <img alt="SiteLogo" src="../assets/icon.png" class="icon"></img>
+          <!-- <br/>
+          <h4>마을 둘러보기</h4> -->
+          </div>
           <ValidationProvider
         name="이메일" rules="required|email" v-slot="{errors}">
-          <v-text-field
+          <v-text-field 
             v-model="email"
+            style="color: #f76706"
             :counter="50"
             :error-messages="errors"
             prepend-inner-icon="mdi-account"
             label="이메일 입력"
             required
-          ></v-text-field> 
+          ><v-icon>mdi-account</v-icon></v-text-field> 
           </ValidationProvider>
           <ValidationProvider
           name="비밀번호" rules="required|min:6" v-slot="{errors}">
           <v-text-field
             v-model="password"
+            style="color: #f76706"
             :counter="13"
             :error-messages="errors"
             prepend-inner-icon="mdi-lock"
-            label="암구호 입력"
+            label="비밀번호 입력"
             required
-          ></v-text-field> 
+          ><v-icon>mdi-lock</v-icon></v-text-field> 
           </ValidationProvider>
+          <ValidationProvider>
           <v-btn
           id="submitBtn"
-          class="mr-4"
           type="submit"
           :disabled="invalid || !validate"
-        >입장하기
+          outlined
+        ><span style="color: white">입장하기</span>
         </v-btn>
         </ValidationProvider>
-
-        <v-btn
-          class="mr-4"
-          type="submit"
-          href="/join"
-        >가입하기
-        </v-btn>
         </form>
       </ValidationObserver>
+      <div class="btnOrganizer">
+        <v-btn
+          text
+          type="submit"
+          href="/join"
+          style="color: #f76706"
+          class="joinBtn">
+          가입하기
+        </v-btn>
+        <v-btn
+          text
+          type="submit"
+          href="#"
+          style="color: #f76706"
+          class="joinBtn">
+          아이디 찾기
+        </v-btn>
+        <v-btn
+          text
+          type="submit"
+          href="#"
+          style="color: #f76706"
+          class="joinBtn">
+          비밀번호 찾기
+        </v-btn>
+        </div>
     </div>
 </div>
 </template>
 <script>
 import axios from "axios";
 import Validate from "@/assets/mixins/Validate.vue";
-
 export default {
   mixins: [Validate],
   data: () => ({
@@ -99,12 +124,41 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #ffb74d;
+  background-color: #ffeccf;
 }
 #submitBtn {
   margin-right: 10%;
+  background-color: #f76706;
+  border-color: #b54c06;
+  width: 100%;
+  margin-top: 30px;
 }
-.backDiv {
+.joinBtn {
+  color: orange;
+}
+.joinBtn:hover {
+  background-color: rgb(250, 212, 141);
+}
+/* .backDiv {
   padding: 10% 30% 0% 30%;
+} */
+.icon {
+  height: 80px;
+  margin-bottom: 50px;
+}
+.container {
+  display: flex;
+  justify-content: center;
+}
+.btnOrganizer {
+  display: flex;
+  margin-top: 40px;
+  justify-content: space-between;
+}
+.mdi-account::before {
+  color: #b54c06;
+}
+.mdi-lock::before {
+  color: #b54c06;
 }
 </style>
