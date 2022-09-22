@@ -101,17 +101,13 @@ export default {
           const { code } = response.data;
           console.log("auth/login - response : ", code);
           localStorage.setItem("token", response.data.token);
-          localStorage.setItem("user", JSON.stringify(response.data.user));
-          // 로컬 스토리지에 유저 정보 저장
+          // 로컬 스토리지에 토큰 저장
           this.$router.push({ path: "/" });
         })
         .catch((error) => {
-          console.log("auth/login - error : ", error);
+          console.log("auth/login - error : ", error.response.status);
           // 에러문구 표시
-          this.$refs.signInForm.setErrors({
-            이메일: ["이메일을 확인해주세요."],
-            비밀번호: ["비밀번호를 확인해주세요."],
-          });
+          alert("비밀번호 또는 아이디를 확인해주세요!");
           this.loading = false;
         });
     },

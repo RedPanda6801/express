@@ -1,11 +1,5 @@
 const express = require("express");
-const {
-  verifyToken,
-  apiLimiter,
-  isLoggedIn,
-  isNotLoggedIn,
-} = require("./middleware");
-const { Follow, Post, User } = require("../models");
+const { verifyToken, isLoggedIn } = require("./middleware");
 const {
   getUser,
   updateUser,
@@ -16,16 +10,16 @@ const {
 const router = express.Router();
 
 // 유저 정보 조회
-// router.get("/", verifyToken, getUser);
+router.get("/info", verifyToken, getUser);
 // 유저 정보 수정
-// router.put("/update", verifyToken, updateUser);
-// // 유저 인증
+router.put("/update", verifyToken, updateUser);
+// 유저 인증
 // router.post("/accept", verifyToken, acceptUser);
-// // 유저 탈퇴
+// 유저 탈퇴
 // router.post("/delete", verifyToken, updateUser);
 
 // 회원 수정 기능 (닉네임만)
-router.get("/", isLoggedIn, async (req, res) => {
+router.get("/modify", isLoggedIn, async (req, res) => {
   try {
     console.log(req.body);
     // const user = await User.findOne({ id: req.user.id });
@@ -44,7 +38,7 @@ router.get("/", isLoggedIn, async (req, res) => {
     });
   }
 });
-router.post("/update", verifyToken, apiLimiter, async (req, res) => {
+router.post("/update", verifyToken, async (req, res) => {
   try {
     // req = {inputNick}
     const newname = req.body.inputNick;
@@ -67,7 +61,7 @@ router.post("/update", verifyToken, apiLimiter, async (req, res) => {
 });
 
 // 회원 삭제 기능
-router.delete("/:id/quit", verifyToken, apiLimiter, async (req, res) => {
+router.delete("/:id/quit", verifyToken, async (req, res) => {
   try {
     // req={params: id}
     const deleteId = req.params.id;
