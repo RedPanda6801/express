@@ -16,7 +16,7 @@ router.put("/update", verifyToken, updateUser);
 // 유저 인증
 // router.post("/accept", verifyToken, acceptUser);
 // 유저 탈퇴
-// router.post("/delete", verifyToken, updateUser);
+router.delete("/delete/:id", verifyToken, deleteUser);
 
 // 회원 수정 기능 (닉네임만)
 router.get("/modify", isLoggedIn, async (req, res) => {

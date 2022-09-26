@@ -82,7 +82,48 @@ exports.updateUser = async (req, res) => {
 //   try {
 //   } catch (err) {}
 // };
-// exports.updateUser = async (req, res) => {
-//   try {
-//   } catch (err) {}
-// };
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
+    if (user) {
+      if (user.id === req.decoded.id) {
+        try {
+          await User.destroy({
+            where: {
+              id: req.decoded.id,
+            },
+          });
+          return res.json({
+            code: 204,
+            mesaage: "Delete Success",
+          });
+        } catch (err) {
+          return res.json({
+            code: 404,
+            message: "Delete Failed",
+            error: err,
+          });
+        }
+      } else {
+        return res.json({
+          code: 400,
+          message: "No Authlization",
+        });
+      }
+    } else {
+      return res.json({
+        code: 400,
+        message: "No User",
+      });
+    }
+  } catch (err) {
+    return res.json({
+      code: 404,
+      message: "Failed",
+    });
+  }
+};
