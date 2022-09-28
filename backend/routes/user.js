@@ -1,5 +1,5 @@
 const express = require("express");
-const { verifyToken, isLoggedIn } = require("./middleware");
+const { verifyToken, isLoggedIn, isNotLoggedIn } = require("./middleware");
 const {
   getUser,
   updateUser,
@@ -13,8 +13,8 @@ const router = express.Router();
 router.get("/info", verifyToken, getUser);
 // 유저 정보 수정
 router.put("/update", verifyToken, updateUser);
-// 유저 인증
-// router.post("/accept", verifyToken, acceptUser);
+// 유저 인증 (검증 X)
+router.post("/accept", verifyToken, isNotLoggedIn, acceptUser);
 // 유저 탈퇴
 router.delete("/delete/:id", verifyToken, deleteUser);
 

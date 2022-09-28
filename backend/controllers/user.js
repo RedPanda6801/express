@@ -1,8 +1,9 @@
 // 유저 정보 조회 (O)
 // 카카오 로그인으로 사용자 인증
 // 유저 정보 수정 (O)
-// 유저 탈퇴
+// 유저 탈퇴 (O)
 const express = require("express");
+const passport = require("passport");
 const { Follow, Post, User } = require("../models");
 exports.getUser = async (req, res) => {
   try {
@@ -110,8 +111,8 @@ exports.deleteUser = async (req, res) => {
         }
       } else {
         return res.json({
-          code: 400,
-          message: "No Authlization",
+          code: 403,
+          message: "Forbidden",
         });
       }
     } else {
@@ -124,6 +125,43 @@ exports.deleteUser = async (req, res) => {
     return res.json({
       code: 404,
       message: "Failed",
+    });
+  }
+};
+// 사용자 인증시 카카오 로그인으로 OAuth 사용
+// 프론트가 구현될 때까지 작동 여부를 판단하기 힘듬
+exports.acceptUser = async (req, res) => {
+  try {
+    passport.authenticate("kakao", (authError, user, info) => {
+      if (authError) {
+        // 인증 에러
+        console.error(authError);
+        return next(authError);
+      }
+      if (!user) {
+        // 입력된 user가 없으면
+        return res.json({
+          code: 404,
+          message: "No User",
+        });
+      }
+      // user가 있으면 리턴
+      return req.login(user, (loginError) => {
+        if (loginError) {
+          console.error(loginError);
+          return next(loginError);
+        }
+        return res.json({
+          code: 200,
+          message: "User Accepted Success",
+        });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({
+      code: 404,
+      message: "Not Found",
     });
   }
 };

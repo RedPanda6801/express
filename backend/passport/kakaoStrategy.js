@@ -1,5 +1,5 @@
 const passport = require("passport");
-//const KakaoStrategy = require('passport-kakao').Strategy;
+const KakaoStrategy = require("passport-kakao").Strategy;
 const User = require("../models/user");
 
 module.exports = () => {
@@ -18,16 +18,18 @@ module.exports = () => {
           if (exUser) {
             done(null, exUser);
           } else {
-            const newUser = await User.create({
-              email: profile._json && profile._json.kakao_account_email,
-              nick: profile.displayName,
-              snsId: profile.id,
-              provider: "kakao",
-            });
+            const newUser = await User.update(
+              {
+                provider: "kakao",
+              },
+              {
+                id: profile.id,
+              }
+            );
             done(null, newUser);
           }
         } catch (error) {
-          console.error(error);
+          console.error("여기 에러인가?", error);
           done(error);
         }
       }
