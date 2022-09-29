@@ -2,9 +2,9 @@
 // 카카오 로그인으로 사용자 인증
 // 유저 정보 수정 (O)
 // 유저 탈퇴 (O)
-const express = require("express");
 const passport = require("passport");
 const { Follow, Post, User } = require("../models");
+
 exports.getUser = async (req, res) => {
   try {
     // jwt토큰의 payload로 User DB에서 user를 찾음

@@ -50,9 +50,10 @@ module.exports = class User extends Sequelize.Model {
   }
 
   static associate(db) {
-    db.User.belongsTo(db.Country);
     db.User.hasMany(db.Post);
-    db.User.hasMany(db.Like);
+    db.User.hasMany(db.Comment);
+    db.User.hasMany(db.Reply);
+    db.User.hasMany(db.Reservation);
     db.User.hasMany(db.Follow, { foreignKey: "followerId", targetKey: "id" });
   }
 };

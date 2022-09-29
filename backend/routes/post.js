@@ -3,21 +3,12 @@ const { verifyToken, apiLimiter } = require("./middleware");
 const User = require("../models/user");
 const Follow = require("../models/follow");
 const Post = require("../models/post");
+
+const { getPoster } = require("../controllers/post");
 const router = express.Router();
-const path = require("path");
-// 모든 게시글 출력 기능(로그인한 사람에 한하여)
-router.get("/", async (req, res) => {
-  try {
-    const data = await Post.findAll({});
-    res.send(data);
-  } catch (err) {
-    console.log(err);
-    res.json({
-      code: 400,
-      message: err,
-    });
-  }
-});
+
+// 모든 게시글 출력 기능(모두 권한 O)
+router.get("/", getPoster);
 // router.get("/", verifyToken, apiLimiter, async (req, res) => {
 //   res.sendFile(path.join(__dirname, "../views/post.html"));
 // });

@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 
-module.exports = class Like extends Sequelize.Model {
+module.exports = class Reservation extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {},
@@ -8,8 +8,9 @@ module.exports = class Like extends Sequelize.Model {
         sequelize,
         timestamps: true,
         underscored: false,
-        modelName: "Like",
-        tableName: "Likes",
+        modelName: "Reservation",
+        tableName: "Reservations",
+        paranoid: false,
         charset: "utf8mb4",
         collate: "utf8mb4_general_ci",
       }
@@ -17,9 +18,7 @@ module.exports = class Like extends Sequelize.Model {
   }
 
   static associate(db) {
-    // user의 id를 UserId로 받아옴(1:N)
-    db.Like.belongsTo(db.User, { foreignKey: "LikerId", sourceKey: "id" });
-    // post의 id를 PostId로 받아옴(1:1)
+    db.Post.belongsTo(db.User);
     db.Post.hasOne(db.Post);
   }
 };

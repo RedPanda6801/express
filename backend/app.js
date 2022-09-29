@@ -8,7 +8,7 @@ const passport = require("passport");
 const cors = require("cors");
 
 dotenv.config();
-const likeRouter = require("./routes/like");
+// const likeRouter = require("./routes/like");
 const authRouter = require("./routes/auth");
 const postRouter = require("./routes/post");
 const userRouter = require("./routes/user");
@@ -55,7 +55,7 @@ app.use(passport.session());
 app.use("/auth", authRouter);
 app.use("/post", postRouter);
 app.use("/user", userRouter);
-app.use("/like", likeRouter);
+// app.use("/like", likeRouter);
 app.use("/", mainRouter);
 
 app.use((req, res, next) => {
