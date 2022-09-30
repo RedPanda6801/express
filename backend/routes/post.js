@@ -1,14 +1,18 @@
 const express = require("express");
-const { verifyToken, apiLimiter } = require("./middleware");
+const { verifyToken, apiLimiter, checkUserOAuth } = require("./middleware");
 const User = require("../models/user");
 const Follow = require("../models/follow");
 const Post = require("../models/post");
 
-const { getPoster } = require("../controllers/post");
+const { getPoster, getCountryPoster } = require("../controllers/post");
 const router = express.Router();
 
 // 모든 게시글 출력 기능(모두 권한 O)
-router.get("/", getPoster);
+router.get("/all", getPoster);
+
+// 인증한 사람의 지역에 대한 데이터들만 가져옴
+router.get("/country", verifyToken, checkUserOAuth, getCountryPoster);
+
 // router.get("/", verifyToken, apiLimiter, async (req, res) => {
 //   res.sendFile(path.join(__dirname, "../views/post.html"));
 // });

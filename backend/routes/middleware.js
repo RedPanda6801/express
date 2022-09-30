@@ -1,5 +1,30 @@
 const jwt = require("jsonwebtoken");
 const RateLimit = require("express-rate-limit");
+const User = require("../models/user");
+
+exports.checkUserOAuth = async (req, res, next) => {
+  try {
+    console.log(req.decoded.id);
+    const user = await User.findOne({ id: req.decoded.id });
+    if (user) {
+      // 이메일 인증을 한 사용자에 한하여 다음 미들웨어로 넘어감
+      if (user.provider) {
+        req.user = user;
+        next();
+      } else {
+        console.log("Forbidden User");
+        res.status(403).json({
+          message: "Forbidden Error",
+        });
+      }
+    } else {
+      console.log("No User");
+      res.status(400).json({ message: "No User" });
+    }
+  } catch (error) {
+    res.status(404).json({ message: "Failed" });
+  }
+};
 
 exports.isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {

@@ -31,7 +31,7 @@ module.exports = class User extends Sequelize.Model {
           type: Sequelize.STRING(13),
           allowNull: true,
         },
-        location: {
+        country: {
           type: Sequelize.STRING(13),
           allowNull: true,
         },
