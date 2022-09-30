@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import NavBar from "@/components/NavBar.vue";
+import Nav from "@/components/Nav.vue";
 import Login from "@/views/Login.vue";
 import Join from "@/views/Join.vue";
 
@@ -10,7 +10,7 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: NavBar,
+    component: Nav,
   },
   {
     path: "/login",
