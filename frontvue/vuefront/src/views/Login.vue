@@ -25,6 +25,7 @@
           name="비밀번호" rules="required|min:6" v-slot="{errors}">
           <v-text-field
             v-model="password"
+            type="password"
             style="color: #f76706"
             :counter="13"
             :error-messages="errors"
@@ -46,6 +47,7 @@
       </ValidationObserver>
       <div class="btnOrganizer">
         <v-btn
+          small
           text
           type="submit"
           href="/join"
@@ -54,6 +56,7 @@
           가입하기
         </v-btn>
         <v-btn
+          small 
           text
           type="submit"
           href="#"
@@ -62,6 +65,7 @@
           아이디 찾기
         </v-btn>
         <v-btn
+          small
           text
           type="submit"
           href="#"
@@ -116,12 +120,11 @@ export default {
 };
 </script>
 <style lang="css">
-html,
 body {
-  height: 100%;
+  height: 100vh;
   margin: 0;
   padding: 0;
-  background-color: #ffeccf;
+  background-color: #ffeccf !important;
 }
 #submitBtn {
   margin-right: 10%;
@@ -151,6 +154,7 @@ body {
   display: flex;
   margin-top: 40px;
   justify-content: space-between;
+  width: 320px;
 }
 .mdi-account::before {
   color: #b54c06;
