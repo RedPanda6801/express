@@ -19,6 +19,7 @@
           required
         ></v-text-field> 
         </ValidationProvider>
+        <!-- 이메일 인증 시에 localStorage에 값이 있기 때문에 입력할 필요 없음 -->
         <ValidationProvider
                   name="이메일"
                   rules="required|email"
@@ -30,6 +31,7 @@
           prepend-inner-icon="mdi-account"
           label="email"
           required
+          disabled
         ></v-text-field> 
         </ValidationProvider>
         <ValidationProvider
@@ -123,6 +125,19 @@ export default {
           console.log(err);
         });
     },
+    // 화면 전환 시에 이메일 인증 여부를 확인해주는 코드
+    checkAuth() {
+      if (!localStorage.getItem("email")) {
+        alert("이메일 인증을 먼저 해주세요!");
+        this.$router.push("/auth-email");
+      } else {
+        // 이메일이 있으면 Input에 넣어줌
+        this.email = localStorage.getItem("email");
+      }
+    },
+  },
+  mounted() {
+    // this.checkAuth();
   },
 };
 </script>

@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 import Nav from "@/components/Nav.vue";
 import Login from "@/views/Login.vue";
 import Join from "@/views/Join.vue";
-
+import EmailAuth from "@/views/EmailAuth.vue";
 Vue.use(VueRouter);
 
 const routes = [
@@ -21,6 +21,11 @@ const routes = [
     path: "/join",
     name: "Join",
     component: Join,
+  },
+  {
+    path: "/auth-email",
+    name: "EmailAuth",
+    component: EmailAuth,
   },
 ];
 

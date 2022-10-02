@@ -8,7 +8,7 @@ const { getAuthCode } = require("../methods/code");
 
 exports.emailsender = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email } = req.params;
     const code = getAuthCode();
     if (code && email) {
       // email과 code가 유효하면 메일을 보냄

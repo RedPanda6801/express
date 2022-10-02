@@ -14,7 +14,7 @@ router.post("/join", signup);
 // 로그인 기능
 router.post("/login", isNotLoggedIn, signin);
 // 인증을 위한 이메일 발송
-router.post("/send-email", emailsender);
+router.get("/send-email/:email", emailsender);
 // 인증 코드에 대한 처리
 router.post("/process-code", emailauth);
 
