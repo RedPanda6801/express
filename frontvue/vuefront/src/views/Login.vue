@@ -50,7 +50,7 @@
           small
           text
           type="submit"
-          href="/join"
+          href="/auth-email"
           style="color: #f76706"
           class="joinBtn">
           가입하기
