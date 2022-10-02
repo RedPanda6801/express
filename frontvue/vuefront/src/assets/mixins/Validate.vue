@@ -4,7 +4,7 @@ import {
   email,
   max,
   confirmed,
-  size,
+  // size,
   min,
 } from "vee-validate/dist/rules";
 import { ValidationProvider, extend, ValidationObserver } from "vee-validate"; // vee-validate 로 부터 사용할 기능 import
@@ -38,10 +38,10 @@ extend("confirmed", {
   message: "비밀번호가 맞지 않습니다.",
 });
 // size
-extend("size", {
-  ...size,
-  message: "비디오 용량({length})이 5MB 를 초과할 수 없습니다.",
-});
+// extend("size", {
+//   ...size,
+//   message: "비디오 용량({length})이 5MB 를 초과할 수 없습니다.",
+// });
 export default {
   components: {
     ValidationObserver,
