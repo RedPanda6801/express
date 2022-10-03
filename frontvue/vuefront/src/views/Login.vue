@@ -5,7 +5,7 @@
       <ValidationObserver rel="signInForm" v-slot="{handleSubmit, invalid, validate}">
       <form @submit.prevent="handleSubmit(signIn)">
           <div class="container">    
-          <img alt="SiteLogo" src="../assets/IconName.png" class="icon"></img>
+          <img alt="SiteLogo" src="../assets/icon.png" class="icon"></img>
           <!-- <br/>
           <h4>마을 둘러보기</h4> -->
           </div>
@@ -45,6 +45,7 @@
         </ValidationProvider>
         </form>
       </ValidationObserver>
+      <v-divider></v-divider>
       <div class="btnOrganizer">
         <v-btn
           small
