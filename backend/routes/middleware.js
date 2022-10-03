@@ -74,10 +74,3 @@ exports.apiLimiter = RateLimit({
     });
   },
 });
-
-exports.deprecated = (req, res) => {
-  res.status(410).json({
-    code: 410,
-    message: "새로운 버전이 나왔습니다. 새로운 버전을 사용하세요.",
-  });
-};

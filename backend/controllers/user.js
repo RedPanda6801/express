@@ -1,10 +1,7 @@
-// 유저 정보 조회 (O)
-// 카카오 로그인으로 사용자 인증
-// 유저 정보 수정 (O)
-// 유저 탈퇴 (O)
 const passport = require("passport");
 const { Follow, Post, User } = require("../models");
 
+// 사용자 정보 조회
 exports.getUser = async (req, res) => {
   try {
     // jwt토큰의 payload로 User DB에서 user를 찾음
@@ -16,26 +13,26 @@ exports.getUser = async (req, res) => {
         nick: user.nick,
         name: user.name,
         phone: user.phone,
-        location: user.location,
+        country: user.country,
       };
-      return res.json({
-        code: 200,
+      return res.status(200).json({
         user: result,
       });
     } else {
       // 유저를 찾지 못했다면
-      return res.json({
-        code: 400,
+      return res.status(400).json({
         message: "No User",
       });
     }
-  } catch (err) {
-    return res.json({
-      code: 404,
-      message: "Failed",
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({
+      message: "Not Found",
     });
   }
 };
+
+// 사용자 정보 수정 API
 exports.updateUser = async (req, res) => {
   // body = {email, location, nick, phone}
   console.log(req.body);
@@ -46,43 +43,32 @@ exports.updateUser = async (req, res) => {
         // request가 있는 값만 수정하도록 함
         await User.update(
           {
-            location: req.body.location ? req.body.location : user.location,
-            email: req.body.email ? req.body.email : user.email,
+            country: req.body.country ? req.body.country : user.country,
             nick: req.body.nick ? req.body.nick : user.nick,
             phone: req.body.phone ? req.body.phone : user.phone,
           },
           { where: { id: req.decoded.id } }
         );
-        return res.json({
-          code: 204,
+        return res.status(200).json({
           message: "Update Success",
         });
-      } catch (err) {
-        console.log(err);
-        return res.json({
-          code: 400,
+      } catch (error) {
+        console.log(error);
+        return res.status(404).json({
           message: "Update Failed",
-          error: err,
         });
       }
     } else
-      return res.json({
-        code: 400,
+      return res.status(400).json({
         message: "No User",
       });
-  } catch (err) {
-    console.log(err);
-    return res.json({
-      code: 404,
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({
       message: "Not Found",
-      error: err,
     });
   }
 };
-// exports.acceptUser = async (req, res) => {
-//   try {
-//   } catch (err) {}
-// };
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findOne({
@@ -98,69 +84,28 @@ exports.deleteUser = async (req, res) => {
               id: req.decoded.id,
             },
           });
-          return res.json({
-            code: 204,
+          return res.status(200).json({
             mesaage: "Delete Success",
           });
-        } catch (err) {
-          return res.json({
-            code: 404,
+        } catch (error) {
+          console.log(error);
+          return res.status(404).json({
             message: "Delete Failed",
-            error: err,
           });
         }
       } else {
-        return res.json({
-          code: 403,
+        return res.status(403).json({
           message: "Forbidden",
         });
       }
     } else {
-      return res.json({
-        code: 400,
+      return res.status(400).json({
         message: "No User",
       });
     }
-  } catch (err) {
-    return res.json({
-      code: 404,
-      message: "Failed",
-    });
-  }
-};
-// 사용자 인증시 카카오 로그인으로 OAuth 사용
-// 프론트가 구현될 때까지 작동 여부를 판단하기 힘듬
-exports.acceptUser = async (req, res) => {
-  try {
-    passport.authenticate("kakao", (authError, user, info) => {
-      if (authError) {
-        // 인증 에러
-        console.error(authError);
-        return next(authError);
-      }
-      if (!user) {
-        // 입력된 user가 없으면
-        return res.json({
-          code: 404,
-          message: "No User",
-        });
-      }
-      // user가 있으면 리턴
-      return req.login(user, (loginError) => {
-        if (loginError) {
-          console.error(loginError);
-          return next(loginError);
-        }
-        return res.json({
-          code: 200,
-          message: "User Accepted Success",
-        });
-      });
-    });
   } catch (error) {
     console.log(error);
-    return res.json({
-      code: 404,
+    return res.status(404).json({
       message: "Not Found",
     });
   }

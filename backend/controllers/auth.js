@@ -41,7 +41,6 @@ exports.emailsender = async (req, res) => {
         info = await transporter.sendMail(mailOption);
         console.log("메일 정보: ", info);
         return res.status(200).json({
-          code: 200,
           message: "Sending Success",
           user: {
             hash: hashCode,
@@ -51,7 +50,6 @@ exports.emailsender = async (req, res) => {
       } catch (error) {
         console.log(error);
         return res.status(400).json({
-          code: 400,
           message: "Email Sending Failed",
         });
       }
@@ -59,7 +57,6 @@ exports.emailsender = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(404).json({
-      code: 404,
       message: "Not Found",
     });
   }
@@ -73,28 +70,27 @@ exports.emailauth = async (req, res) => {
     console.log(result);
     if (result) {
       return res.status(200).json({
-        code: 200,
         message: "Decoding Success",
         email,
       });
     } else {
       return res.status(401).json({
-        code: 401,
         message: "Decoding Failed",
       });
     }
   } catch (error) {
     console.log(error);
     return res.status(404).json({
-      code: 404,
       message: "Not Found",
     });
   }
 };
 
 exports.signup = async (req, res) => {
-  const { email, password, nick, name, phone, country, provider } = req.body;
   try {
+    const { email, password, nick, name, phone, country } = req.body;
+    const domain = email.split("@")[1];
+    const provider = domain.split(".")[0];
     // 입력한 email로 UserDB의 email을 찾는다.
     const user = await User.findOne({ where: { email } });
     if (!user) {
@@ -112,26 +108,22 @@ exports.signup = async (req, res) => {
         password: hash,
       });
       if (join) {
-        res.json({
-          code: 200,
+        res.status(200).json({
           message: "success",
         });
       } else {
-        res.json({
-          code: 400,
+        res.status(400).json({
           message: "failed",
         });
       }
     } else {
-      res.json({
-        code: 401,
+      res.status(401).json({
         message: "existed",
       });
     }
   } catch (err) {
     console.log(err);
-    res.json({
-      code: 500,
+    res.status(500).json({
       message: "서버 오류",
     });
   }
@@ -167,8 +159,7 @@ exports.signin = async (req, res, next) => {
         }
       );
       req.session.jwt = token;
-      return res.json({
-        code: 200,
+      return res.status(200).json({
         message: "success",
         token,
         // payload에 user의 값이 담겨있음

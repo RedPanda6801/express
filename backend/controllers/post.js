@@ -4,20 +4,17 @@ exports.getPoster = async (req, res) => {
   try {
     const data = await Post.findAll({});
     if (data) {
-      return res.json({
-        code: 200,
+      return res.status(200).json({
         message: "success",
         post: data,
       });
     } else
-      return res.json({
-        code: 400,
+      return res.status(400).json({
         message: "Failed to Find",
       });
-  } catch (err) {
-    console.log(err);
-    res.json({
-      code: 404,
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({
       message: "Not Found",
     });
   }
@@ -32,23 +29,18 @@ exports.getCountryPoster = async (req, res) => {
       },
     });
     if (localPost && localPost !== []) {
-      console.log("Get Data Success");
-      return res.json({
-        code: 200,
+      return res.status(200).json({
         message: "Get Data Success",
         post: localPost,
       });
     } else {
-      console.log("Get Failed");
-      return res.json({
-        code: 400,
+      return res.status(400).json({
         message: "No Data In Country",
       });
     }
   } catch (error) {
     console.log(error);
-    return res.json({
-      code: 404,
+    return res.status(404).json({
       message: "Not Found",
     });
   }

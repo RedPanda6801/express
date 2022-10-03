@@ -45,7 +45,6 @@
                 type="submit"
                 :disabled="invalid || !validate"
                 outlined
-                @click="sendEmail"
                 ><span style="color: white"> 이메일 발송 </span>
               </v-btn>
             </ValidationProvider>
@@ -91,7 +90,6 @@
                 type="submit"
                 :disabled="invalid || !validate"
                 outlined
-                @click="authCode"
                 ><span style="color: white"> 코드 인증</span>
               </v-btn>
             </ValidationProvider>
@@ -122,8 +120,8 @@
       <AuthModal
         :openDialog="statusModal"
         v-on:closeDialog="closeAuthModal"
-        v-on:newCode="resendEmail"
-        v-on:newEmail="reAuth"
+        v-on:newCode="sendEmail"
+        v-on:newEmail="isSendEmail = false"
       ></AuthModal>
     </div>
   </div>
@@ -176,16 +174,6 @@ export default {
         });
     },
     sendEmail() {
-      // Validation 사용 방법을 몰라 자체적으로 유효성 검사 코드를 만들었습니다. HTML쪽 확인하시고 수정 부탁드립니다.
-      // const emailArr = this.email.split("@");
-      // if (emailArr.length !== 2) {
-      //   alert("이메일 입력이 잘못되었습니다. (@입력 X)");
-      //   return;
-      // } else if (emailArr[1].split(".").length === 1) {
-      //   alert("도메인 입력이 잘못되었습니다. (.입력 X");
-      //   return;
-      // }
-      // Validation 사용이 가능해지면 이 코드는 삭제하셔도 괜찮습니다.
       const email =
         this.emailProvider === "daum"
           ? `${this.emailId}@daum.net`
@@ -193,7 +181,7 @@ export default {
       this.tempEmail = email;
       alert(`"${email}" 이메일을 발송하였습니다.`);
       axios
-        .get(process.env.VUE_APP_URL + `/auth/send-email/${this.email}`)
+        .get(process.env.VUE_APP_URL + `/auth/send-email/${email}`)
         .then((response) => {
           console.log("이메일 발송 성공 : ", response);
           if (localStorage.getItem("auth")) {
@@ -206,27 +194,6 @@ export default {
           console.log("이메일 발송 실패 : ", error);
         });
     },
-
-    // 이것도 작동 안해서 임시로만 넣어둔 것 추후 수정 필요
-    resendEmail() {
-      const email = this.tempEmail;
-      console.log("임시이메일 찍히나?:", email);
-      alert(`"${email}" 이메일을 발송하였습니다.`);
-      axios
-        .get(process.env.VUE_APP_URL + `/auth/send-email/${this.email}`)
-        .then((response) => {
-          console.log("이메일 발송 성공 : ", response);
-          if (localStorage.getItem("auth")) {
-            localStorage.removeItem("auth");
-          }
-          this.isSendEmail = true;
-          localStorage.setItem("auth", JSON.stringify(response.data.user));
-        })
-        .catch((error) => {
-          console.log("이메일 발송 실패 : ", error);
-        });
-    },
-
     back() {
       localStorage.removeItem("auth");
       this.$router.push({ path: "/login" });
@@ -239,13 +206,8 @@ export default {
       this.statusModal = false;
       console.log("-- close : ", this.statusModal);
     },
-    // 제대로 작동 안될것 같은데 백이랑 같이 돌려볼것
-    reAuth() {
-      localStorage.removeItem("auth");
-      this.isSendEmail = false;
-      console.log("작동은 하는지 확인용");
-    },
   },
+  // resendEmail, reAuth는 기존에 있는 코드와 변수값 변경으로 대체함. Component에서 확인 요망.
 };
 </script>
 <style lang="css">

@@ -9,7 +9,7 @@
         <ValidationProvider
                   name="별명"
                   rules="required"
-                  v-slot="{ errors }">
+                  v-slot="{ errors }"
         <v-text-field
           v-model="nick"
           :counter="10"
