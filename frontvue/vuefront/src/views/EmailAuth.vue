@@ -36,24 +36,6 @@
                     ></b-form-select>
                   </div>
                 </template>
-
-                <!-- 뷰티파이는 왜 작동이 안되는지 모르겠어서... 일단 부트스트랩으로 -->
-                <!-- <template>
-              <v-select
-                v-model="email_provider"
-                :items="['@gmail.com', '@naver.com', '@daum.net', '@kakao.com']"
-                label="원하시는 이메일을 선택해 주세요"
-              >
-                <template v-slot:item="{ item, attrs, on }">
-                  <v-list-item v-bind="attrs" v-on="on">
-                    <v-list-item-title
-                      :id="attrs['aria-labelledby']"
-                      v-text="item"
-                    ></v-list-item-title>
-                  </v-list-item>
-                </template>
-              </v-select>
-            </template> -->
               </ValidationProvider>
             </div>
             <ValidationProvider>
@@ -113,10 +95,14 @@
                 ><span style="color: white"> 코드 인증</span>
               </v-btn>
             </ValidationProvider>
-            <!-- 여기에 버튼 하나 더 만들어서 인증번호 재발송 / 다른 이메일로 인증 기능 넣을 모달 띄울 기능 추가 -->
-            <v-btn><p>인증메일을 받지 못하셨나요?</p></v-btn>
           </form>
         </ValidationObserver>
+        <!-- 여기에 버튼 하나 더 만들어서 인증번호 재발송 / 다른 이메일로 인증 기능 넣을 모달 띄울 기능 추가 -->
+        <div class="btnOrganizer">
+          <v-btn small text class="modalBtn" @click="openAuthModal"
+            ><span style="color: grey">인증메일을 받지 못하셨나요?</span></v-btn
+          >
+        </div>
       </div>
       <v-divider></v-divider>
       <div>
@@ -130,19 +116,35 @@
         >
       </div>
     </div>
+    <div data-app>
+      <!-- **newCode 그냥 다시 emit으로 authCode 실행하면 될 줄 알았으나 이메일이 null값으로 담김
+      이걸 다시 처리해줄 방법은 생각해보고 추후 개선하겠습니다 -->
+      <AuthModal
+        :openDialog="statusModal"
+        v-on:closeDialog="closeAuthModal"
+        v-on:newCode="resendEmail"
+        v-on:newEmail="reAuth"
+      ></AuthModal>
+    </div>
   </div>
 </template>
 <script>
 import axios from "axios";
 import Validate from "@/assets/mixins/Validate.vue";
+import AuthModal from "@/components/modal/EmailAuthModal.vue";
 export default {
   name: "EmailAuth",
+  components: {
+    AuthModal,
+  },
   mixins: [Validate],
   data: () => ({
     emailId: "",
     emailProvider: null,
+    tempEmail: "",
     isSendEmail: false,
     inputCode: "",
+    statusModal: false,
     options: [
       { value: null, text: "도메인입력" },
       { value: "gmail", text: "gmail.com" },
@@ -188,6 +190,7 @@ export default {
         this.emailProvider === "daum"
           ? `${this.emailId}@daum.net`
           : `${this.emailId}@${this.emailProvider}.com`;
+      this.tempEmail = email;
       alert(`"${email}" 이메일을 발송하였습니다.`);
       axios
         .get(process.env.VUE_APP_URL + `/auth/send-email/${this.email}`)
@@ -203,9 +206,44 @@ export default {
           console.log("이메일 발송 실패 : ", error);
         });
     },
+
+    // 이것도 작동 안해서 임시로만 넣어둔 것 추후 수정 필요
+    resendEmail() {
+      const email = this.tempEmail;
+      console.log("임시이메일 찍히나?:", email);
+      alert(`"${email}" 이메일을 발송하였습니다.`);
+      axios
+        .get(process.env.VUE_APP_URL + `/auth/send-email/${this.email}`)
+        .then((response) => {
+          console.log("이메일 발송 성공 : ", response);
+          if (localStorage.getItem("auth")) {
+            localStorage.removeItem("auth");
+          }
+          this.isSendEmail = true;
+          localStorage.setItem("auth", JSON.stringify(response.data.user));
+        })
+        .catch((error) => {
+          console.log("이메일 발송 실패 : ", error);
+        });
+    },
+
     back() {
       localStorage.removeItem("auth");
       this.$router.push({ path: "/login" });
+    },
+    openAuthModal() {
+      this.statusModal = true;
+      console.log("-- open : ", this.statusModal);
+    },
+    closeAuthModal() {
+      this.statusModal = false;
+      console.log("-- close : ", this.statusModal);
+    },
+    // 제대로 작동 안될것 같은데 백이랑 같이 돌려볼것
+    reAuth() {
+      localStorage.removeItem("auth");
+      this.isSendEmail = false;
+      console.log("작동은 하는지 확인용");
     },
   },
 };
@@ -231,5 +269,12 @@ export default {
   margin-top: 80px;
   color: grey;
   font-size: 10px;
+}
+.joinBtn {
+  margin-top: 20px;
+  color: grey;
+}
+.joinBtn:hover {
+  background-color: #eee;
 }
 </style>
