@@ -1,35 +1,44 @@
 <template>
   <div class="backDiv">
     <div id="formDiv">
-      <ValidationObserver
-        rel="authForm"
-        v-slot="{ handleSubmit, invalid, validate }"
-      >
-        <form @submit.prevent="handleSubmit(sendEmail)">
-          <div class="header"><p>이메일 인증</p></div>
-          <div class="inputControl">
-            <ValidationProvider name="이메일아이디" rules="required">
-              <v-text-field
-                v-model="emailId"
-                :counter="30"
-                placeholder="아이디 입력"
-                required
-              ></v-text-field>
-            </ValidationProvider>
-            <h5>@</h5>
-            <ValidationProvider name="이메일_provider" rules="required-select">
-              <!-- 이메일선택지 -->
-              <template>
-                <div>
-                  <b-form-select
-                    v-model="emailProvider"
-                    :options="options"
-                  ></b-form-select>
-                </div>
-              </template>
+      <div v-show="!isSendEmail">
+        <ValidationObserver
+          rel="authForm"
+          v-slot="{ handleSubmit, invalid, validate }"
+        >
+          <form @submit.prevent="handleSubmit(sendEmail)">
+            <div class="header">
+              <p>
+                당근마켓 계정으로 사용할<br />
+                이메일 주소를 입력해 주세요.
+              </p>
+            </div>
+            <div class="inputControl">
+              <ValidationProvider name="이메일아이디" rules="required">
+                <v-text-field
+                  v-model="emailId"
+                  :counter="30"
+                  placeholder="아이디 입력"
+                  required
+                ></v-text-field>
+              </ValidationProvider>
+              <h5>@</h5>
+              <ValidationProvider
+                name="이메일_provider"
+                rules="required-select"
+              >
+                <!-- 이메일선택지 -->
+                <template>
+                  <div>
+                    <b-form-select
+                      v-model="emailProvider"
+                      :options="options"
+                    ></b-form-select>
+                  </div>
+                </template>
 
-              <!-- 뷰티파이는 왜 작동이 안되는지 모르겠어서... 일단 부트스트랩으로 -->
-              <!-- <template>
+                <!-- 뷰티파이는 왜 작동이 안되는지 모르겠어서... 일단 부트스트랩으로 -->
+                <!-- <template>
               <v-select
                 v-model="email_provider"
                 :items="['@gmail.com', '@naver.com', '@daum.net', '@kakao.com']"
@@ -45,53 +54,70 @@
                 </template>
               </v-select>
             </template> -->
+              </ValidationProvider>
+            </div>
+            <ValidationProvider>
+              <v-btn
+                name="이메일_발송"
+                id="submitBtn"
+                type="submit"
+                :disabled="invalid || !validate"
+                outlined
+                @click="sendEmail"
+                ><span style="color: white"> 이메일 발송 </span>
+              </v-btn>
             </ValidationProvider>
+          </form>
+          <div class="explain">
+            <p>
+              - 입력하신 이메일 주소로 인증코드가 발송됩니다.<br />
+              - 인증메일을 받을 수 있도록 자주 쓰는 이메일 주소를 입력해 주세요.
+              <br />
+              - 인증받으신 이메일은 당근마켓 계정 아이디로 활용됩니다.
+            </p>
           </div>
-          <ValidationProvider>
-            <v-btn
-              name="이메일_발송"
-              id="submitBtn"
-              type="submit"
-              :disabled="invalid || !validate"
-              outlined
-              @click="sendEmail"
-              ><span style="color: white"> 이메일 발송 </span>
-            </v-btn>
-          </ValidationProvider>
-        </form>
-      </ValidationObserver>
-      <ValidationObserver
-        rel="authForm"
-        v-slot="{ handleSubmit, invalid, validate }"
-      >
-        <form @submit.prevent="handleSubmit(authCode)">
-          <ValidationProvider
-            name="인증코드"
-            rules="required"
-            v-slot="{ errors }"
-          >
-            <v-otp-input
-              v-model="inputCode"
-              v-show="isSendEmail"
-              length="6"
-              type="text"
-              :error-messages="errors"
-            ></v-otp-input>
-          </ValidationProvider>
-          <ValidationProvider>
-            <v-btn
-              v-show="isSendEmail"
-              name="코드인증"
-              id="submitBtn"
-              type="submit"
-              :disabled="invalid || !validate"
-              outlined
-              @click="authCode"
-              ><span style="color: white"> 코드 인증</span>
-            </v-btn>
-          </ValidationProvider>
-        </form>
-      </ValidationObserver>
+        </ValidationObserver>
+      </div>
+      <div v-show="isSendEmail">
+        <ValidationObserver
+          rel="authForm"
+          v-slot="{ handleSubmit, invalid, validate }"
+        >
+          <form @submit.prevent="handleSubmit(authCode)">
+            <div class="header">
+              <p>
+                이메일로 발송된<br />
+                인증코드를 입력해 주세요.
+              </p>
+            </div>
+            <ValidationProvider
+              name="인증코드"
+              rules="required"
+              v-slot="{ errors }"
+            >
+              <v-otp-input
+                v-model="inputCode"
+                length="6"
+                type="text"
+                :error-messages="errors"
+              ></v-otp-input>
+            </ValidationProvider>
+            <ValidationProvider>
+              <v-btn
+                name="코드인증"
+                id="submitBtn"
+                type="submit"
+                :disabled="invalid || !validate"
+                outlined
+                @click="authCode"
+                ><span style="color: white"> 코드 인증</span>
+              </v-btn>
+            </ValidationProvider>
+            <!-- 여기에 버튼 하나 더 만들어서 인증번호 재발송 / 다른 이메일로 인증 기능 넣을 모달 띄울 기능 추가 -->
+            <v-btn><p>인증메일을 받지 못하셨나요?</p></v-btn>
+          </form>
+        </ValidationObserver>
+      </div>
       <v-divider></v-divider>
       <div>
         <v-btn
@@ -191,8 +217,8 @@ export default {
 .header {
   padding: 10%;
   text-align: center;
-  font-size: 30px;
   color: #f76706;
+  font-size: 20px;
 }
 .inputControl {
   display: grid;
@@ -200,5 +226,10 @@ export default {
   grid-gap: 1%;
   justify-content: center;
   align-items: center;
+}
+.explain {
+  margin-top: 80px;
+  color: grey;
+  font-size: 10px;
 }
 </style>
