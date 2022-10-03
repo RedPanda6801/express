@@ -17,7 +17,7 @@
               ></v-text-field>
             </ValidationProvider>
             <h5>@</h5>
-            <VaildationProvider name="이메일_provider" rules="required-select">
+            <ValidationProvider name="이메일_provider" rules="required-select">
               <!-- 이메일선택지 -->
               <template>
                 <div>
@@ -45,7 +45,7 @@
                 </template>
               </v-select>
             </template> -->
-            </VaildationProvider>
+            </ValidationProvider>
           </div>
           <ValidationProvider>
             <v-btn
