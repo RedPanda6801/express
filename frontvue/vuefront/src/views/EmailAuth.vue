@@ -5,7 +5,7 @@
         rel="authForm"
         v-slot="{ handleSubmit, invalid, validate }"
       >
-        <form @submit.prevent="handleSubmit(authCode)">
+        <form @submit.prevent="handleSubmit(sendEmail)">
           <div class="header"><p>이메일 인증</p></div>
           <div class="inputControl">
             <ValidationProvider name="이메일아이디" rules="required">
@@ -60,32 +60,37 @@
           </ValidationProvider>
         </form>
       </ValidationObserver>
-      <ValidationObserver>
-        <ValidationProvider
-          name="인증코드"
-          rules="required"
-          v-slot="{ errors }"
-        >
-          <v-otp-input
-            v-model="inputCode"
-            v-show="isSendEmail"
-            length="6"
-            type="text"
-            :error-messages="errors"
-          ></v-otp-input>
-        </ValidationProvider>
-        <ValidationProvider>
-          <v-btn
-            v-show="isSendEmail"
-            name="코드인증"
-            id="submitBtn"
-            type="submit"
-            :disabled="invalid || !validate"
-            outlined
-            @click="authCode"
-            ><span style="color: white"> 코드 인증</span>
-          </v-btn>
-        </ValidationProvider>
+      <ValidationObserver
+        rel="authForm"
+        v-slot="{ handleSubmit, invalid, validate }"
+      >
+        <form @submit.prevent="handleSubmit(authCode)">
+          <ValidationProvider
+            name="인증코드"
+            rules="required"
+            v-slot="{ errors }"
+          >
+            <v-otp-input
+              v-model="inputCode"
+              v-show="isSendEmail"
+              length="6"
+              type="text"
+              :error-messages="errors"
+            ></v-otp-input>
+          </ValidationProvider>
+          <ValidationProvider>
+            <v-btn
+              v-show="isSendEmail"
+              name="코드인증"
+              id="submitBtn"
+              type="submit"
+              :disabled="invalid || !validate"
+              outlined
+              @click="authCode"
+              ><span style="color: white"> 코드 인증</span>
+            </v-btn>
+          </ValidationProvider>
+        </form>
       </ValidationObserver>
       <v-divider></v-divider>
       <div>
