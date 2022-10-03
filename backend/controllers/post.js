@@ -20,7 +20,7 @@ exports.getPoster = async (req, res) => {
   }
 };
 
-// 검증되지 않은 API (미들웨어부터 확인해보자.)
+// 지역 별로 게시물을 가져오는 API
 exports.getCountryPoster = async (req, res) => {
   try {
     const localPost = await Post.findAll({
