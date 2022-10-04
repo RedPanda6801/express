@@ -20,18 +20,22 @@ module.exports = class User extends Sequelize.Model {
         // 실명 확인에서 추가
         provider: {
           type: Sequelize.STRING(13),
-          allowNull: true,
+          allowNull: false,
         },
         name: {
           type: Sequelize.STRING(100),
-          allowNull: true,
+          allowNull: false,
         },
         phone: {
           type: Sequelize.STRING(13),
-          allowNull: true,
+          allowNull: false,
         },
-        country: {
+        location: {
           type: Sequelize.STRING(13),
+          allowNull: false,
+        },
+        hashCode: {
+          type: Sequelize.STRING(100),
           allowNull: true,
         },
       },

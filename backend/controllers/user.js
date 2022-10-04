@@ -13,7 +13,7 @@ exports.getUser = async (req, res) => {
         nick: user.nick,
         name: user.name,
         phone: user.phone,
-        country: user.country,
+        location: user.location,
       };
       return res.status(200).json({
         user: result,
@@ -43,7 +43,7 @@ exports.updateUser = async (req, res) => {
         // request가 있는 값만 수정하도록 함
         await User.update(
           {
-            country: req.body.country ? req.body.country : user.country,
+            location: req.body.location ? req.body.location : user.location,
             nick: req.body.nick ? req.body.nick : user.nick,
             phone: req.body.phone ? req.body.phone : user.phone,
           },

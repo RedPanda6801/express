@@ -6,10 +6,17 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const { getAuthCode } = require("../methods/code");
 
+const mailList = ["naver", "gmail", "daum", "kakao"];
+
+// 인증번호를 이메일로 보내는 API
 exports.emailsender = async (req, res) => {
   try {
     const { email } = req.params;
+    // 메일에 보낼 인증 코드를 생성, DB에 암호화하여 임시 보관
     const code = getAuthCode();
+    const hashCode = await bcrypt.hash(code, 12);
+    console.log("hashing code : ", hashCode);
+
     if (code && email) {
       // email과 code가 유효하면 메일을 보냄
       let transporter = nodemailer.createTransport({
@@ -25,31 +32,44 @@ exports.emailsender = async (req, res) => {
           minVersion: "TLSv1.2",
         },
       });
-
       let mailOption = {
         from: process.env.EMAIL,
         to: email, // list of receivers
-        subject: "Hello ✔", // Subject line
+        subject: "🥕당근마켓 인증 코드 발송 메일🥕", // Subject line
         html: `<h1>이메일 인증 코드입니다.</h1>
         <h2>${code}</h2>
         <h3>인증 화면으로 돌아가 입력해주세요.</h3>`, // html body
       };
-      // LocalStorage에 저장하되, 암호화하여 저장 -> 코드 인증 시에 복호화하여 비교
-      const hashCode = await bcrypt.hash(code, 12);
-      console.log(hashCode);
+
       try {
-        info = await transporter.sendMail(mailOption);
-        console.log("메일 정보: ", info);
-        return res.status(200).json({
-          message: "Sending Success",
-          user: {
-            hash: hashCode,
+        // db에 동일한 이메일이 있는지 확인
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+          await User.create({
+            // 입력한 값들에 대해 각각의 유효성 검사가 필요(백엔드에서 한번 더 처리)
             email,
-          },
-        });
+            nick: "",
+            name: "",
+            phone: "",
+            location: "",
+            provider: "",
+            password: "",
+            hashCode,
+          });
+          info = await transporter.sendMail(mailOption);
+          console.log("Sending Mail - response : ", info);
+
+          return res.status(200).json({
+            message: "Sending Success",
+          });
+        } else {
+          return res.status(400).json({
+            message: "Already Existed User",
+          });
+        }
       } catch (error) {
         console.log(error);
-        return res.status(400).json({
+        return res.status(404).json({
           message: "Email Sending Failed",
         });
       }
@@ -62,21 +82,29 @@ exports.emailsender = async (req, res) => {
   }
 };
 
+// 이메일 인증
 exports.emailauth = async (req, res) => {
   try {
-    const { email, code, hash } = req.body;
-    // 복호화 해줌
-    const result = await bcrypt.compare(code, hash);
-    console.log(result);
-    if (result) {
-      return res.status(200).json({
-        message: "Decoding Success",
-        email,
-      });
-    } else {
-      return res.status(401).json({
-        message: "Decoding Failed",
-      });
+    // 이메일과 인증 코드를 post로 받아옴
+    const { email, code } = req.body;
+    // 인증코드를 받은 이메일을 가져옴
+    const AuthUser = await User.findOne({ where: { email } });
+    if (AuthUser.hashCode) {
+      // hashCode 값이 null이 아니면 받아온 코드와 비교
+      const result = await bcrypt.compare(code, AuthUser.hashCode);
+      console.log("bcrypt response - isAuth : ", result);
+
+      if (result) {
+        return res.status(200).json({
+          message: "Decoding Success",
+          email,
+          code,
+        });
+      } else {
+        return res.status(401).json({
+          message: "Decoding Failed",
+        });
+      }
     }
   } catch (error) {
     console.log(error);
@@ -88,37 +116,58 @@ exports.emailauth = async (req, res) => {
 
 exports.signup = async (req, res) => {
   try {
-    const { email, password, nick, name, phone, country } = req.body;
-    const domain = email.split("@")[1];
-    const provider = domain.split(".")[0];
-    // 입력한 email로 UserDB의 email을 찾는다.
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      // 없으면 userDB에 생성
-      // password 암호화
-      const hash = await bcrypt.hash(password, 12);
-      const join = await User.create({
-        // 입력한 값들에 대해 각각의 유효성 검사가 필요(백엔드에서 한번 더 처리)
-        email,
-        nick,
-        name,
-        phone,
-        country,
-        provider,
-        password: hash,
-      });
-      if (join) {
-        res.status(200).json({
-          message: "success",
+    // code는 localStorage에 저장된 값을 가져옴
+    const { email, password, nick, name, phone, location, code } = req.body;
+    // 요구하는 입력이 전부 들어왔는지 확인
+    if (email && password && nick && name && phone && location) {
+      const domain = email.split("@")[1];
+      const provider = domain.split(".")[0];
+      if (!mailList.find((mail) => mail === provider)) {
+        return res.status(400).json({
+          message: "Doamin didn't Provided",
         });
+      }
+      // 입력한 email로 UserDB의 email을 확인
+      const user = await User.findOne({ where: { email } });
+      // 이메일을 보낸 user에 한하여 코드를 진행
+      if (user.hashCode) {
+        // 외부에서 바로 '/join'으로 회원가입하는 잘못된 접근에 대한 인증 절차
+        const codeCheck = await bcrypt.compare(code, user.hashCode);
+        console.log("Auth Before Join - response : ", codeCheck);
+        if (codeCheck) {
+          // password 암호화
+          const hash = await bcrypt.hash(password, 12);
+          const join = await User.update(
+            {
+              // 입력한 값들에 대해 각각의 유효성 검사가 필요(백엔드에서 한번 더 처리)
+              nick,
+              name,
+              phone,
+              location,
+              provider,
+              password: hash,
+              hashCode: null,
+            },
+            { where: { email } }
+          );
+          if (join) {
+            res.status(200).json({
+              message: "success",
+            });
+          } else {
+            res.status(400).json({
+              message: "failed",
+            });
+          }
+        }
       } else {
-        res.status(400).json({
-          message: "failed",
+        return res.status(401).json({
+          message: "Wrong Access - Not Authentication",
         });
       }
     } else {
-      res.status(401).json({
-        message: "existed",
+      return res.status(400).json({
+        message: "Bad Request",
       });
     }
   } catch (err) {
@@ -155,7 +204,7 @@ exports.signin = async (req, res, next) => {
         process.env.JWT_SECRET,
         {
           expiresIn: "30m", // 30분
-          issuer: "nodebird",
+          issuer: "Dangun Farmer",
         }
       );
       req.session.jwt = token;

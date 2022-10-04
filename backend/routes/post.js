@@ -6,7 +6,7 @@ const Post = require("../models/post");
 
 const {
   getPoster,
-  getCountryPoster,
+  getLocationPoster,
   addPoster,
 } = require("../controllers/post");
 const router = express.Router();
@@ -15,7 +15,7 @@ const router = express.Router();
 router.get("/all-post", getPoster);
 
 // 인증한 사람의 지역에 대한 데이터들만 가져옴
-router.get("/country-post", verifyToken, checkUserOAuth, getCountryPoster);
+router.get("/country-post", verifyToken, checkUserOAuth, getLocationPoster);
 
 // 게시물 추가 API
 router.get("/add-post", verifyToken, checkUserOAuth, addPoster);

@@ -21,11 +21,11 @@ exports.getPoster = async (req, res) => {
 };
 
 // 지역 별로 게시물을 가져오는 API
-exports.getCountryPoster = async (req, res) => {
+exports.getLocationPoster = async (req, res) => {
   try {
     const localPost = await Post.findAll({
       where: {
-        country: req.user.country,
+        location: req.user.location,
       },
     });
     if (localPost && localPost !== []) {
@@ -35,7 +35,7 @@ exports.getCountryPoster = async (req, res) => {
       });
     } else {
       return res.status(400).json({
-        message: "No Data In Country",
+        message: "No Data In Location",
       });
     }
   } catch (error) {

@@ -137,7 +137,7 @@ export default {
     },
   },
   mounted() {
-    // this.checkAuth();
+    this.checkAuth();
   },
 };
 </script>
