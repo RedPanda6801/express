@@ -45,3 +45,15 @@ exports.getCountryPoster = async (req, res) => {
     });
   }
 };
+
+exports.addPoster = async (req, res) => {
+  try {
+    console.log("Adding Post is ready!");
+    // const newPost = req.body;
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({
+      message: "Not Found",
+    });
+  }
+};
