@@ -10,6 +10,5 @@ router.get("/info", verifyToken, getUser);
 router.put("/update", verifyToken, updateUser);
 // 유저 탈퇴
 router.delete("/delete/:id", verifyToken, deleteUser);
-// 회원 수정 기능 (닉네임만)
 
 module.exports = router;
