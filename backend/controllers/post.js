@@ -21,11 +21,11 @@ exports.getPoster = async (req, res) => {
 };
 
 // 지역 별로 게시물을 가져오는 API
-exports.getCountryPoster = async (req, res) => {
+exports.getLocationPoster = async (req, res) => {
   try {
     const localPost = await Post.findAll({
       where: {
-        country: req.user.country,
+        location: req.user.location,
       },
     });
     if (localPost && localPost !== []) {

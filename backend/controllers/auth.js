@@ -6,9 +6,15 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const { getAuthCode } = require("../methods/code");
 
+const mailList = ["naver", "gmail", "daum", "kakao"];
+
 exports.emailsender = async (req, res) => {
   try {
     const { email } = req.params;
+    const user = await User.findOne({ where: { email } });
+    if (user) {
+      return res.status(400).json({ message: "Already User Existed" });
+    }
     const code = getAuthCode();
     if (code && email) {
       // email과 code가 유효하면 메일을 보냄
@@ -88,41 +94,53 @@ exports.emailauth = async (req, res) => {
 
 exports.signup = async (req, res) => {
   try {
-    const { email, password, nick, name, phone, country } = req.body;
-    const domain = email.split("@")[1];
-    const provider = domain.split(".")[0];
-    // 입력한 email로 UserDB의 email을 찾는다.
-    const user = await User.findOne({ where: { email } });
-    if (!user) {
-      // 없으면 userDB에 생성
-      // password 암호화
-      const hash = await bcrypt.hash(password, 12);
-      const join = await User.create({
-        // 입력한 값들에 대해 각각의 유효성 검사가 필요(백엔드에서 한번 더 처리)
-        email,
-        nick,
-        name,
-        phone,
-        country,
-        provider,
-        password: hash,
-      });
-      if (join) {
-        res.status(200).json({
-          message: "success",
+    const { email, password, nick, name, phone, location } = req.body;
+
+    if (email && password && nick && name && phone && location) {
+      const domain = email.split("@")[1];
+      const provider = domain.split(".")[0];
+      // 입력한 email로 UserDB의 email을 찾는다.
+      if (!mailList.find((mail) => mail === provider)) {
+        return res.status(400).json({
+          message: "Doamin didn't Provided",
         });
+      }
+      const user = await User.findOne({ where: { nick } });
+      if (!user) {
+        // 없으면 userDB에 생성
+        // password 암호화
+        const hash = await bcrypt.hash(password, 12);
+        const join = await User.create({
+          // 입력한 값들에 대해 각각의 유효성 검사가 필요(백엔드에서 한번 더 처리)
+          email,
+          nick,
+          name,
+          phone,
+          location,
+          provider,
+          password: hash,
+        });
+        if (join) {
+          res.status(200).json({
+            message: "success",
+          });
+        } else {
+          res.status(400).json({
+            message: "failed",
+          });
+        }
       } else {
         res.status(400).json({
-          message: "failed",
+          message: "Already Existed User",
         });
       }
     } else {
-      res.status(401).json({
-        message: "existed",
+      res.status(400).json({
+        message: "Bad Request",
       });
     }
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({
       message: "서버 오류",
     });
